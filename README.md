@@ -11,6 +11,12 @@ Python (pandas, NumPy), SQL, Excel (pivot tables on `retail_sales.csv`), Power B
 - `queries.sql`: six business questions answered in SQL
 - `dashboard.html`: interactive dashboard
 
+## Dashboard Preview
+
+Explore the interactive dashboard: [Live Dashboard](https://furqaan123456.github.io/retail-sales-analysis/dashboard.html)
+
+![Retail Sales Dashboard](images/retail-sales-dashboard.png)
+
 ## Key findings
 - South is the top region, with 27% of sales.
 - October to December brings about a third of annual sales.
