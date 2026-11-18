@@ -23,8 +23,4 @@ Explore the interactive dashboard: [Live Dashboard](https://furqaan123456.github
 - Sales grew about 43% from 2022 to 2025.
 - Orders with a 30% discount lose money overall, while undiscounted orders are the main profit source.
 
-## Recommendation
-Cap discounts at 20%, and run seasonal stock and campaigns ahead of October.
 
-## Next steps
-Replace the sample data with a real dataset (for example Superstore from Kaggle), then add customer segmentation (RFM) and a sales forecast.
