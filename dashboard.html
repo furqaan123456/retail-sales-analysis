@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Retail Sales Analysis</title>
+<style>
+:root{--bg:#f3f6f4;--card:#fff;--ink:#12201a;--mute:#5d6b64;--line:#d9e1dc;--a:#0f766e;--b:#d97706;--bad:#b42318;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1714;--card:#16231e;--ink:#e8f0ec;--mute:#9bb0a6;--line:#27382f;--a:#2dd4bf;--b:#fbbf24;--bad:#f87171}}
+:root[data-theme="dark"]{--bg:#0e1714;--card:#16231e;--ink:#e8f0ec;--mute:#9bb0a6;--line:#27382f;--a:#2dd4bf;--b:#fbbf24;--bad:#f87171}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:28px 18px 48px}
+h1{font:700 clamp(1.8rem,4vw,2.6rem)/1.1 Georgia,"Times New Roman",serif;margin:0 0 6px}
+.sub{color:var(--mute);margin:0 0 24px;max-width:62ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.k{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.k b{display:block;font-size:1.5rem;font-variant-numeric:tabular-nums}.k span{color:var(--mute);font-size:.85rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:12px}
+.c{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.c.w{grid-column:1/-1}.c h2{font-size:1rem;margin:0 0 10px}.box{position:relative;height:260px}
+ul{margin:0;padding-left:1.1em}li{margin:6px 0;max-width:80ch}
+.note{color:var(--mute);font-size:.82rem;margin-top:18px}
+</style></head><body><main>
+<h1>Retail sales analysis</h1>
+<p class="sub">Sales, profit and customer orders across five regions and three categories, 2022 to 2025.</p>
+<div class="kpis" id="kpis"></div>
+<div class="grid">
+<div class="c w"><h2>Monthly sales and profit</h2><div class="box"><canvas id="m"></canvas></div></div>
+<div class="c"><h2>Sales by region</h2><div class="box"><canvas id="r"></canvas></div></div>
+<div class="c"><h2>Top products by sales</h2><div class="box"><canvas id="p"></canvas></div></div>
+<div class="c w"><h2>Key findings</h2><ul id="ins"></ul></div>
+</div>
+<p class="note">Sample data generated with a fixed random seed for demonstration. Amounts are in Indian rupees.</p>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const D={"kpi": {"sales": 98473670.0, "profit": 18954772.5, "orders": 6000, "customers": 1193, "margin": 0.19248569186057551, "repeat": 0.961441743503772}, "monthly": {"month": ["2022-01", "2022-02", "2022-03", "2022-04", "2022-05", "2022-06", "2022-07", "2022-08", "2022-09", "2022-10", "2022-11", "2022-12", "2023-01", "2023-02", "2023-03", "2023-04", "2023-05", "2023-06", "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12"], "sales": [1356588.0, 1282636.0, 2179744.0, 1516999.0, 1409648.0, 1265895.0, 1588294.0, 1568866.0, 1097885.0, 2648132.0, 2226316.0, 2619602.0, 1562046.0, 1011964.0, 2356176.0, 1548066.0, 1425434.0, 1558579.0, 1533197.0, 1664328.0, 1744546.0, 2450521.0, 2306514.0, 2939138.0, 1690060.0, 1842490.0, 2125021.0, 1871706.0, 1837048.0, 1872798.0, 1865824.0, 1772220.0, 2255410.0, 2822656.0, 3261925.0, 2806458.0, 2232244.0, 2001665.0, 3002542.0, 2036168.0, 1900581.0, 2305252.0, 2351126.0, 2044680.0, 2332036.0, 3625932.0, 2450404.0, 3306311.0], "profit": [284878.0, 225658.0, 417656.0, 262060.0, 255672.0, 253014.0, 310137.0, 295232.0, 229838.0, 486988.0, 412241.0, 497240.0, 297502.0, 231692.0, 456075.0, 301412.0, 300460.0, 312438.0, 296079.0, 344563.0, 285021.0, 396098.0, 429634.0, 565778.0, 287236.0, 376266.0, 354902.0, 372454.0, 389764.0, 345008.0, 352106.0, 340180.0, 470335.0, 586230.0, 699514.0, 546988.0, 446695.0, 327098.0, 556743.0, 404388.0, 359760.0, 488738.0, 414966.0, 404102.0, 464525.0, 701290.0, 510862.0, 607255.0]}, "region": {"region": ["South", "West", "North", "Central", "East"], "sales": [26572113.0, 26350122.0, 17569316.0, 14876934.0, 13105185.0], "profit": [5022244.0, 4944730.0, 3513495.0, 2917988.0, 2556316.0]}, "prod": {"product": ["Standing Desk", "Monitor 24in", "Bookcase", "Office Chair", "Headphones", "Laptop Stand", "Wireless Mouse", "Printer Paper"], "sales": [36814050.0, 19366000.0, 16006340.0, 13116375.0, 6246630.0, 3501520.0, 1517220.0, 820066.0], "profit": [5593770.0, 2137390.0, 3221064.0, 3262125.0, 2046564.0, 1219240.0, 605430.0, 289978.0]}, "cat": {"category": ["Furniture", "Office Supplies", "Technology"], "sales": [65936765.0, 1905535.0, 30631370.0], "profit": [12076959.0, 869190.0, 6008624.0]}, "insights": ["South is the top region with 27% of sales; East is the smallest.", "Standing Desk is the best-selling product by revenue.", "October to December brings 34% of annual sales, and sales grew 43% from 2022 to 2025.", "Orders with a 30% discount made -382,365 in profit versus 10,692,304 at no discount, so deep discounts are eroding margin."]};
+const inr=n=>"₹"+(n>=1e7?(n/1e7).toFixed(2)+" Cr":n>=1e5?(n/1e5).toFixed(2)+" L":Math.round(n).toLocaleString("en-IN"));
+const K=D.kpi,items=[["Total sales",inr(K.sales)],["Total profit",inr(K.profit)],["Profit margin",(K.margin*100).toFixed(1)+"%"],["Orders",K.orders.toLocaleString("en-IN")],["Customers",K.customers.toLocaleString("en-IN")],["Repeat customers",(K.repeat*100).toFixed(0)+"%"]];
+document.getElementById("kpis").innerHTML=items.map(i=>`<div class="k"><b>${i[1]}</b><span>${i[0]}</span></div>`).join("");
+document.getElementById("ins").innerHTML=D.insights.map(t=>`<li>${t}</li>`).join("");
+let charts=[];
+function draw(){
+ charts.forEach(c=>c.destroy());charts=[];
+ const s=getComputedStyle(document.documentElement),v=n=>s.getPropertyValue(n).trim();
+ Chart.defaults.color=v("--mute");Chart.defaults.borderColor=v("--line");
+ const o={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:12}}},scales:{y:{ticks:{callback:inr}}}};
+ charts.push(new Chart("m",{type:"line",data:{labels:D.monthly.month,datasets:[{label:"Sales",data:D.monthly.sales,borderColor:v("--a"),pointRadius:0,tension:.25},{label:"Profit",data:D.monthly.profit,borderColor:v("--b"),pointRadius:0,tension:.25}]},options:{...o,scales:{...o.scales,x:{ticks:{maxTicksLimit:8}}}}}));
+ charts.push(new Chart("r",{type:"bar",data:{labels:D.region.region,datasets:[{label:"Sales",data:D.region.sales,backgroundColor:v("--a")}]},options:{...o,plugins:{legend:{display:false}}}}));
+ charts.push(new Chart("p",{type:"bar",data:{labels:D.prod.product,datasets:[{label:"Sales",data:D.prod.sales,backgroundColor:v("--b")}]},options:{...o,indexAxis:"y",plugins:{legend:{display:false}},scales:{x:{ticks:{callback:inr}}}}}));
+}
+draw();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",draw);
+</script></body></html>

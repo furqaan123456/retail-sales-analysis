@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Retail Sales Analysis</title>
+<style>
+:root{--bg:#f3f6f4;--card:#fff;--ink:#12201a;--mute:#5d6b64;--line:#d9e1dc;--a:#0f766e;--b:#d97706;--bad:#b42318;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1714;--card:#16231e;--ink:#e8f0ec;--mute:#9bb0a6;--line:#27382f;--a:#2dd4bf;--b:#fbbf24;--bad:#f87171}}
+:root[data-theme="dark"]{--bg:#0e1714;--card:#16231e;--ink:#e8f0ec;--mute:#9bb0a6;--line:#27382f;--a:#2dd4bf;--b:#fbbf24;--bad:#f87171}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1080px;margin:0 auto;padding:28px 18px 48px}
+h1{font:700 clamp(1.8rem,4vw,2.6rem)/1.1 Georgia,"Times New Roman",serif;margin:0 0 6px}
+.sub{color:var(--mute);margin:0 0 24px;max-width:62ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.k{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.k b{display:block;font-size:1.5rem;font-variant-numeric:tabular-nums}.k span{color:var(--mute);font-size:.85rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:12px}
+.c{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+.c.w{grid-column:1/-1}.c h2{font-size:1rem;margin:0 0 10px}.box{position:relative;height:260px}
+ul{margin:0;padding-left:1.1em}li{margin:6px 0;max-width:80ch}
+.note{color:var(--mute);font-size:.82rem;margin-top:18px}
+</style></head><body><main>
+<h1>Retail sales analysis</h1>
+<p class="sub">Sales, profit and customer orders across five regions and three categories, 2022 to 2025.</p>
+<div class="kpis" id="kpis"></div>
+<div class="grid">
+<div class="c w"><h2>Monthly sales and profit</h2><div class="box"><canvas id="m"></canvas></div></div>
+<div class="c"><h2>Sales by region</h2><div class="box"><canvas id="r"></canvas></div></div>
+<div class="c"><h2>Top products by sales</h2><div class="box"><canvas id="p"></canvas></div></div>
+<div class="c w"><h2>Key findings</h2><ul id="ins"></ul></div>
+</div>
+<p class="note">Sample data generated with a fixed random seed for demonstration. Amounts are in Indian rupees.</p>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const D=__DATA__;
+const inr=n=>"₹"+(n>=1e7?(n/1e7).toFixed(2)+" Cr":n>=1e5?(n/1e5).toFixed(2)+" L":Math.round(n).toLocaleString("en-IN"));
+const K=D.kpi,items=[["Total sales",inr(K.sales)],["Total profit",inr(K.profit)],["Profit margin",(K.margin*100).toFixed(1)+"%"],["Orders",K.orders.toLocaleString("en-IN")],["Customers",K.customers.toLocaleString("en-IN")],["Repeat customers",(K.repeat*100).toFixed(0)+"%"]];
+document.getElementById("kpis").innerHTML=items.map(i=>`<div class="k"><b>${i[1]}</b><span>${i[0]}</span></div>`).join("");
+document.getElementById("ins").innerHTML=D.insights.map(t=>`<li>${t}</li>`).join("");
+let charts=[];
+function draw(){
+ charts.forEach(c=>c.destroy());charts=[];
+ const s=getComputedStyle(document.documentElement),v=n=>s.getPropertyValue(n).trim();
+ Chart.defaults.color=v("--mute");Chart.defaults.borderColor=v("--line");
+ const o={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:12}}},scales:{y:{ticks:{callback:inr}}}};
+ charts.push(new Chart("m",{type:"line",data:{labels:D.monthly.month,datasets:[{label:"Sales",data:D.monthly.sales,borderColor:v("--a"),pointRadius:0,tension:.25},{label:"Profit",data:D.monthly.profit,borderColor:v("--b"),pointRadius:0,tension:.25}]},options:{...o,scales:{...o.scales,x:{ticks:{maxTicksLimit:8}}}}}));
+ charts.push(new Chart("r",{type:"bar",data:{labels:D.region.region,datasets:[{label:"Sales",data:D.region.sales,backgroundColor:v("--a")}]},options:{...o,plugins:{legend:{display:false}}}}));
+ charts.push(new Chart("p",{type:"bar",data:{labels:D.prod.product,datasets:[{label:"Sales",data:D.prod.sales,backgroundColor:v("--b")}]},options:{...o,indexAxis:"y",plugins:{legend:{display:false}},scales:{x:{ticks:{callback:inr}}}}}));
+}
+draw();matchMedia("(prefers-color-scheme: dark)").addEventListener("change",draw);
+</script></body></html>
